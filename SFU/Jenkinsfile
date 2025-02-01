@@ -14,7 +14,7 @@ pipeline {
           def safePackageMetadata = PackageMetadata1.replaceAll('"', '\\"')
 
           // Run Python script and capture status
-          def status = sh(script: "python3 hello.py '${safePackageMetadata}' '${PackageContentS3Key}' '${Email}' '${BaseUrl}'", returnStatus: true)
+          def status = sh(script: "python3 SFU.py '${safePackageMetadata}' '${PackageContentS3Key}' '${Email}' '${BaseUrl}'", returnStatus: true)
 
           // Fail pipeline if script fails
           if (status != 0) {
