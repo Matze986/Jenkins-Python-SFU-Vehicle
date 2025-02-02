@@ -1,6 +1,14 @@
 import json
 import sys
 import subprocess
+import boto3
+from botocore.exceptions import NoCredentialsError, ClientError
+
+# MinIO Configuration
+MINIO_ENDPOINT = ""
+ACCESS_KEY = ""
+SECRET_KEY = ""
+BUCKET_NAME = ""
 
 # Build form data object
 def flatten_json(obj, prefix=''):
@@ -102,12 +110,43 @@ def sending_curl_command(curl_command):
 
 
 
-def download_package_file(minio_base_url, PackageContentS3Key):
+def download_package_file(minio_base_url, package_s3_key, local_file_path="/tmp/downloaded_package"):
+    """
+    Downloads a package file from a MinIO bucket.
+
+    Args:
+        minio_base_url (str): Base URL of MinIO server.
+        package_s3_key (str): The S3 key (object name) of the file.
+        local_file_path (str, optional): Local path to save the downloaded file.
+
+    Returns:
+        str: The path of the downloaded file.
+    """
     try:
-        print(f"Downloading {PackageContentS3Key}...\n")
-        print("Downloading finished successfully.\n")
-    except Exception:        
-        print(f"Download failed: {Exception} ")
+        print(f"Connecting to MinIO at {minio_base_url}...\n")
+
+        # Initialize MinIO client using boto3
+        s3_client = boto3.client(
+            's3',
+            endpoint_url=minio_base_url,  # MinIO runs on localhost:9000
+            aws_access_key_id=ACCESS_KEY,
+            aws_secret_access_key=SECRET_KEY
+        )
+
+        print(f"Downloading {package_s3_key} from bucket '{BUCKET_NAME}'...\n")
+
+        # Download the file
+        s3_client.download_file(BUCKET_NAME, package_s3_key, local_file_path)
+
+        print(f"Download complete! File saved to {local_file_path}\n")
+        return local_file_path
+
+    except NoCredentialsError:
+        print("ERROR: Invalid MinIO credentials. Check Access Key & Secret Key.\n")
+        sys.exit(1)
+
+    except ClientError as e:
+        print(f"ERROR: Failed to download file from MinIO: {e}\n")
         sys.exit(1)
 
 def build_package_service_endpoint_url(base_url, id=None):
@@ -152,6 +191,7 @@ def main(PackageMetadata, PackageContentS3Key, Email, BaseUrl):
             curl_command = build_form_data(parsed_data, destination_url, http_mode, PackageContentS3Key)
         case _:
             # Default case (None or empty string)
+            print(f"PackageContentS3Key is not provided. Skipping Download.")
             curl_command = build_form_data(parsed_data, destination_url, http_mode)     
 
     print(f"Sending curl command: {curl_command} ...\n")
@@ -172,6 +212,7 @@ if __name__ == "__main__":
     PackageContentS3Key = sys.argv[2]
     Email = sys.argv[3]
     BaseUrl = sys.argv[4]
+    Type = sys.argv[5]
     
     #json_string = json.dumps(parsed_data)
     main(PackageMetadata, PackageContentS3Key, Email, BaseUrl)
