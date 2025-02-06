@@ -157,9 +157,9 @@ def download_package_file(minio_base_url, bucket_name, package_s3_key, local_fil
 
 def build_package_service_endpoint_url(base_url, id=None):
     if id is None:
-        build_destination_url = f"{base_url}/SFU/Package/FromJenkins"
-
-    build_destination_url = f"{base_url}/SFU/Package/{id}/FromJenkins"
+        build_destination_url = f"{base_url}/{Type}/Package/FromJenkins"
+    else:
+        build_destination_url = f"{base_url}/{Type}/Package/{id}/FromJenkins"
 
     return build_destination_url
 
@@ -183,11 +183,9 @@ def main(PackageMetadata, PackageContentS3Key, Email, BaseUrl, Type):
     # Check http_method POST/PUR
     package_id = parsed_data.get("ID")
     if package_id is None:
-        print("Warning: 'ID' is missing or null in the JSON data.\n")
         destination_url = build_package_service_endpoint_url(package_service_base_url)
         http_mode = "POST"
     else:
-        print(f"Package ID: {package_id}\n")
         destination_url = build_package_service_endpoint_url(package_service_base_url, package_id)
         http_mode = "PUT"
 
