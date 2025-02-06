@@ -144,7 +144,7 @@ def download_package_file(minio_base_url, bucket_name, package_s3_key, local_fil
         # Download the file
         s3_client.download_file(bucket_name, package_s3_key, local_file_path)
 
-        print(f"Download complete! File saved to {local_file_path}\n")
+        print(f"Download complete! File saved to {local_file_path}/{package_s3_key}\n")
         return local_file_path
 
     except NoCredentialsError:
