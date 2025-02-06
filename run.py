@@ -85,7 +85,7 @@ def build_form_data(parsed_data, url, http_method=None, file=None):
 
         # Added filename path if provided
         if file:
-            curl_command += f'  --form "file=@/tmp/downloaded_package/{file}" \\\n'
+            curl_command += f'  --form "file=@{file}" \\\n'
 
         # Remove trailing backslash and newline
         curl_command = curl_command.rstrip(" \\\n")
@@ -194,7 +194,7 @@ def main(PackageMetadata, PackageContentS3Key, Email, BaseUrl, Type):
         case str() if PackageContentS3Key:
             # Checks if it's a non-empty string, download file and append to curl command form data object
             download_package_file(minio_base_url, BUCKET_NAME, PackageContentS3Key)
-            curl_command = build_form_data(parsed_data, destination_url, http_mode, f"/tmp{PackageContentS3Key}")
+            curl_command = build_form_data(parsed_data, destination_url, http_mode, f"/tmp/{PackageContentS3Key}")
         case _:
             # Default case (None or empty string)
             print(f"PackageContentS3Key is not provided. Skipping Download.")
