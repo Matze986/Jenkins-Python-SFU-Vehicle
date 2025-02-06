@@ -5,7 +5,7 @@ import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
 
 # MinIO Configuration
-MINIO_ENDPOINT = "http://localhost:9090/"
+MINIO_ENDPOINT = "http://host.docker.internal:9090/"
 ACCESS_KEY = "IAB1NY18WjiqGmAMvhj8"
 SECRET_KEY = "g7T5SB0INNVi5XqM5bpVrRDiWGQHgyX3Q1niH9Yj"
 BUCKET_NAME = "test-bucket"
@@ -110,12 +110,13 @@ def sending_curl_command(curl_command):
 
 
 
-def download_package_file(minio_base_url, package_s3_key, local_file_path="/tmp/downloaded_package"):
+def download_package_file(minio_base_url, bucket_name, package_s3_key, local_file_path="/tmp/downloaded_package"):
     """
     Downloads a package file from a MinIO bucket.
 
     Args:
-        minio_base_url (str): Base URL of MinIO server.
+        minio_base_url (str): Base URL of MinIO server (e.g., "http://localhost:9000").
+        bucket_name (str): The name of the MinIO bucket.
         package_s3_key (str): The S3 key (object name) of the file.
         local_file_path (str, optional): Local path to save the downloaded file.
 
@@ -128,15 +129,15 @@ def download_package_file(minio_base_url, package_s3_key, local_file_path="/tmp/
         # Initialize MinIO client using boto3
         s3_client = boto3.client(
             's3',
-            endpoint_url="http://localhost:9090/",
+            endpoint_url=minio_base_url,  # Use the passed MinIO URL
             aws_access_key_id="IAB1NY18WjiqGmAMvhj8",
             aws_secret_access_key="g7T5SB0INNVi5XqM5bpVrRDiWGQHgyX3Q1niH9Yj"
         )
 
-        print(f"Downloading {package_s3_key} from bucket '{BUCKET_NAME}'...\n")
+        print(f"Downloading '{package_s3_key}' from bucket '{bucket_name}'...\n")
 
         # Download the file
-        s3_client.download_file(BUCKET_NAME, package_s3_key, local_file_path)
+        s3_client.download_file(bucket_name, package_s3_key, local_file_path)
 
         print(f"Download complete! File saved to {local_file_path}\n")
         return local_file_path
@@ -188,7 +189,7 @@ def main(PackageMetadata, PackageContentS3Key, Email, BaseUrl, Type):
     match PackageContentS3Key:
         case str() if PackageContentS3Key:
             # Checks if it's a non-empty string, download file and append to curl command form data object
-            download_package_file(minio_base_url, PackageContentS3Key)
+            download_package_file(minio_base_url, BUCKET_NAME, PackageContentS3Key)
             curl_command = build_form_data(parsed_data, destination_url, http_mode, PackageContentS3Key)
         case _:
             # Default case (None or empty string)
