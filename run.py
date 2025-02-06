@@ -137,7 +137,7 @@ def download_package_file(minio_base_url, bucket_name, package_s3_key, local_fil
         print(f"Downloading '{package_s3_key}' from bucket '{bucket_name}'...\n")
 
         # Download the file
-        s3_client.download_file(bucket_name, package_s3_key, local_file_path/package_s3_key)
+        s3_client.download_file(bucket_name, package_s3_key, local_file_path)
 
         print(f"Download complete! File saved to {local_file_path}\n")
         return local_file_path
