@@ -77,11 +77,12 @@ def build_form_data(parsed_data, url, http_method=None, file=None):
     try:
         # Generate the curl command using --form
         curl_command = f'curl -X "{http_method}" "{url}" \\\n'
-        for key, value in flattened_data.items():
-            curl_command += f'  --form "{key}={value}" \\\n'
-
+        
         # Add custom headers
         curl_command += '  -H "x-forwarded-client-cert: Subject=\\"UID=DRMADMIN\\"" \\\n'
+
+        for key, value in flattened_data.items():
+            curl_command += f'  --form "{key}={value}" \\\n'
 
         # Added filename path if provided
         if file:
