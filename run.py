@@ -57,7 +57,7 @@ def get_base_urls(base_url):
         return ["http://host.docker.internal:5006", "http://host.docker.internal:9000"]
     return [base_url]
 
-def build_form_data(parsed_data, url, http_method=None, file_path=None):
+def build_form_data(parsed_data, url, http_method=None, file=None):
     """
     Constructs a cURL command using form data based on the given input.
 
@@ -80,8 +80,12 @@ def build_form_data(parsed_data, url, http_method=None, file_path=None):
         for key, value in flattened_data.items():
             curl_command += f'  --form "{key}={value}" \\\n'
 
-        if file_path:
-            curl_command += f'  --form "file=@/tmp/{file_path}" \\\n'
+        # Add custom headers
+        curl_command += '  -H "x-forwarded-client-cert: Subject=\\"UID=DRMADMIN\\"" \\\n'
+
+        # Added filename path if provided
+        if file:
+            curl_command += f'  --form "file=@/tmp/downloaded_package/{file}" \\\n'
 
         # Remove trailing backslash and newline
         curl_command = curl_command.rstrip(" \\\n")
@@ -190,7 +194,7 @@ def main(PackageMetadata, PackageContentS3Key, Email, BaseUrl, Type):
         case str() if PackageContentS3Key:
             # Checks if it's a non-empty string, download file and append to curl command form data object
             download_package_file(minio_base_url, BUCKET_NAME, PackageContentS3Key)
-            curl_command = build_form_data(parsed_data, destination_url, http_mode, PackageContentS3Key)
+            curl_command = build_form_data(parsed_data, destination_url, http_mode, f"/tmp{PackageContentS3Key}")
         case _:
             # Default case (None or empty string)
             print(f"PackageContentS3Key is not provided. Skipping Download.")
