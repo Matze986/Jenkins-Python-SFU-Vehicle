@@ -5,10 +5,10 @@ import boto3
 from botocore.exceptions import NoCredentialsError, ClientError
 
 # MinIO Configuration
-MINIO_ENDPOINT = ""
-ACCESS_KEY = ""
-SECRET_KEY = ""
-BUCKET_NAME = ""
+MINIO_ENDPOINT = "http://localhost:9090/"
+ACCESS_KEY = "IAB1NY18WjiqGmAMvhj8"
+SECRET_KEY = "g7T5SB0INNVi5XqM5bpVrRDiWGQHgyX3Q1niH9Yj"
+BUCKET_NAME = "test-ucket"
 
 # Build form data object
 def flatten_json(obj, prefix=''):
@@ -128,9 +128,9 @@ def download_package_file(minio_base_url, package_s3_key, local_file_path="/tmp/
         # Initialize MinIO client using boto3
         s3_client = boto3.client(
             's3',
-            endpoint_url=minio_base_url,
-            aws_access_key_id=ACCESS_KEY,
-            aws_secret_access_key=SECRET_KEY
+            endpoint_url="http://localhost:9090/",
+            aws_access_key_id="IAB1NY18WjiqGmAMvhj8"
+            aws_secret_access_key="g7T5SB0INNVi5XqM5bpVrRDiWGQHgyX3Q1niH9Yj"
         )
 
         print(f"Downloading {package_s3_key} from bucket '{BUCKET_NAME}'...\n")
@@ -215,6 +215,5 @@ if __name__ == "__main__":
     BaseUrl = sys.argv[4]
     Type = sys.argv[5]
     
-    #json_string = json.dumps(parsed_data)
     main(PackageMetadata, PackageContentS3Key, Email, BaseUrl, Type)
 
