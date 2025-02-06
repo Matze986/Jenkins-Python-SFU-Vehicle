@@ -158,9 +158,10 @@ def build_package_service_endpoint_url(base_url, id=None):
     return build_destination_url
 
 
-def main(PackageMetadata, PackageContentS3Key, Email, BaseUrl):
+def main(PackageMetadata, PackageContentS3Key, Email, BaseUrl, Type):
     print(f"Start building ... \n")
-    
+    print(f"Current Pipeline type: {Type}")
+
     base_urls = get_base_urls(BaseUrl)
     package_service_base_url = base_urls[0]
     minio_base_url = base_urls[1]
@@ -215,5 +216,5 @@ if __name__ == "__main__":
     Type = sys.argv[5]
     
     #json_string = json.dumps(parsed_data)
-    main(PackageMetadata, PackageContentS3Key, Email, BaseUrl)
+    main(PackageMetadata, PackageContentS3Key, Email, BaseUrl, Type)
 
