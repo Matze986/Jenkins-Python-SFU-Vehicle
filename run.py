@@ -8,7 +8,7 @@ from botocore.exceptions import NoCredentialsError, ClientError
 MINIO_ENDPOINT = "http://localhost:9090/"
 ACCESS_KEY = "IAB1NY18WjiqGmAMvhj8"
 SECRET_KEY = "g7T5SB0INNVi5XqM5bpVrRDiWGQHgyX3Q1niH9Yj"
-BUCKET_NAME = "test-ucket"
+BUCKET_NAME = "test-bucket"
 
 # Build form data object
 def flatten_json(obj, prefix=''):
