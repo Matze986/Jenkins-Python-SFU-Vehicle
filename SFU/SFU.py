@@ -128,7 +128,7 @@ def download_package_file(minio_base_url, package_s3_key, local_file_path="/tmp/
         # Initialize MinIO client using boto3
         s3_client = boto3.client(
             's3',
-            endpoint_url=minio_base_url,  # MinIO runs on localhost:9000
+            endpoint_url=minio_base_url,
             aws_access_key_id=ACCESS_KEY,
             aws_secret_access_key=SECRET_KEY
         )
