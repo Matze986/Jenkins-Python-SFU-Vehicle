@@ -115,7 +115,7 @@ def sending_curl_command(curl_command):
 
 
 
-def download_package_file(minio_base_url, bucket_name, package_s3_key, local_file_path="/tmp"):
+def download_package_file(minio_base_url, bucket_name, package_s3_key, local_file_path="/tmp/downloaded_package_from_s3"):
     """
     Downloads a package file from a MinIO bucket.
 
